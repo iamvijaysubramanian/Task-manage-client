@@ -3,7 +3,10 @@ import axios from "axios";
 
 const TaskContext = createContext();
 
-const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const apiUrl =
+  process.env.REACT_APP_API_URL ||
+  "http://localhost:5000" ||
+  "https://task-manage-server.onrender.com/";
 
 export const useTaskContext = () => {
   return useContext(TaskContext);
