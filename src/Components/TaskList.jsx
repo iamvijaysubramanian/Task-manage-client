@@ -8,6 +8,8 @@ function TaskList() {
   const [taskId, setTaskId] = useState("");
   const [taskTitle, setTaskTitle] = useState("");
   const [taskDescription, setTaskDescription] = useState("");
+  const [taskPriority, setTaskPriority] = useState("");
+  const [taskDueDate, setTaskDueDate] = useState("");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [openDropdownId, setOpenDropdownId] = useState(null);
@@ -18,16 +20,23 @@ function TaskList() {
     setOpenDropdownId(null);
   };
 
-  const handleEdit = (taskId, taskTitle, taskDescription) => {
-    setTaskId(taskId);
-    setTaskTitle(taskTitle);
-    setTaskDescription(taskDescription);
+  const handleEdit = (task) => {
+    setTaskId(task._id);
+    setTaskTitle(task.title);
+    setTaskDescription(task.description);
+    setTaskPriority(task.priority);
+    setTaskDueDate(task.dueDate);
     setIsEditModalOpen(true);
     setOpenDropdownId(null);
   };
 
   const handleComplete = (taskId) => {
     updateTaskStatus(taskId, "completed");
+    setOpenDropdownId(null);
+  };
+
+  const handleTodo = (taskId) => {
+    updateTaskStatus(taskId, "todo");
     setOpenDropdownId(null);
   };
 
@@ -58,8 +67,9 @@ function TaskList() {
       {filteredTasks.map((task) => (
         <div
           key={task._id}
-          className={`relative rounded-md shadow-md
-					${getStatusColor(task.status)}`}
+          className={`relative rounded-md shadow-md ${getStatusColor(
+            task.status
+          )}`}
         >
           <div className="p-4">
             <div className="flex justify-between items-center mb-2">
@@ -84,6 +94,15 @@ function TaskList() {
               </button>
             </div>
             <p className="text-sm text-gray-600 mb-4">{task.description}</p>
+            <p className="text-sm text-gray-600 mb-2">
+              <strong>Priority:</strong> {task.priority || "None"}
+            </p>
+            <p className="text-sm text-gray-600">
+              <strong>Due Date:</strong>{" "}
+              {task.dueDate
+                ? new Date(task.dueDate).toLocaleDateString()
+                : "None"}
+            </p>
           </div>
           {isDropdownOpen(task._id) && (
             <div
@@ -93,9 +112,7 @@ function TaskList() {
               <button
                 className="block w-full py-2 px-4
 							text-left hover:bg-gray-100"
-                onClick={() =>
-                  handleEdit(task._id, task.title, task.description)
-                }
+                onClick={() => handleEdit(task)}
               >
                 Edit
               </button>
@@ -115,6 +132,15 @@ function TaskList() {
                   Mark as Completed
                 </button>
               )}
+              {task.status === "completed" && (
+                <button
+                  className="block w-full py-2 px-4
+													text-left hover:bg-gray-100"
+                  onClick={() => handleTodo(task._id)}
+                >
+                  Mark as Todo
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -127,9 +153,13 @@ function TaskList() {
       <EditModal
         isOpen={isEditModalOpen}
         closeModal={() => setIsEditModalOpen(false)}
-        taskId={taskId}
-        initialTitle={taskTitle}
-        initialDescription={taskDescription}
+        task={{
+          _id: taskId,
+          title: taskTitle,
+          description: taskDescription,
+          priority: taskPriority,
+          dueDate: taskDueDate,
+        }}
       />
     </div>
   );

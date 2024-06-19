@@ -22,7 +22,7 @@ export const TaskProvider = ({ children }) => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(`${apiUrl}/tasks`);
+      const response = await axios.get(`${apiUrl}/api/tasks`);
       setTasks(response.data);
       setFilteredTasks(response.data);
       setTotalTasks(response.data.length);
@@ -47,7 +47,7 @@ export const TaskProvider = ({ children }) => {
 
   const addTask = async (title, description, status) => {
     try {
-      const response = await axios.post(`${apiUrl}/tasks`, {
+      const response = await axios.post(`${apiUrl}/api/tasks`, {
         title,
         description,
         status,
@@ -66,8 +66,8 @@ export const TaskProvider = ({ children }) => {
 
   const deleteTask = async (taskId) => {
     try {
-      await axios.delete(`${apiUrl}/tasks/${taskId}`);
-      const updatedTasks = tasks.filter((task) => task.id !== taskId);
+      await axios.delete(`${apiUrl}/api/tasks/${taskId}`);
+      const updatedTasks = tasks.filter((task) => task._id !== taskId);
       setTasks(updatedTasks);
       setFilteredTasks(updatedTasks);
       setTotalTasks((prev) => prev - 1);
@@ -88,7 +88,7 @@ export const TaskProvider = ({ children }) => {
     updatedStatus
   ) => {
     try {
-      await axios.put(`${apiUrl}/tasks/${taskId}`, {
+      await axios.put(`${apiUrl}/api/tasks/${taskId}`, {
         title: updatedTitle,
         description: updatedDescription,
         status: updatedStatus,
@@ -101,7 +101,7 @@ export const TaskProvider = ({ children }) => {
 
   const updateTaskStatus = async (taskId, status) => {
     try {
-      await axios.put(`${apiUrl}/tasks/${taskId}`, { status });
+      await axios.put(`${apiUrl}/api/tasks/${taskId}`, { status });
       const updatedTasks = tasks.map((task) =>
         task._id === taskId ? { ...task, status } : task
       );
